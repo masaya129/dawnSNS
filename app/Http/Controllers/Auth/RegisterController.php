@@ -49,9 +49,19 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'username' => 'required|string|max:255',
-            'mail' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:4|confirmed',
+            'username' => 'required|string|min:4|max:12',
+            'mail' => 'required|string|email|min:4|max:50|unique:users',
+            'password' => 'required|string|min:4|max:12|alpha_num|confirmed',
+        ],[
+            'required' => 'この項目は必須です',
+            'min' => 'この項目は４文字以上です',
+            'username.max' => '名前は１２文字以下です',
+            'mail.max' => 'メールは５０文字以下です',
+            'password.max' => 'パスワードは１２文字以下です',
+            'email' => 'emailでないといけません',
+            'unique' => 'このメールアドレスはすでに存在します',
+            'alpha_num' => 'パスワードは半角英数字でないといけません',
+            'confirmed' => '確認用のパスワードと一致しません',
         ]);
     }
 
@@ -79,8 +89,17 @@ class RegisterController extends Controller
         if($request->isMethod('post')){
             $data = $request->input();
 
-            $this->create($data);
-            return redirect('added');
+            $validator=$this->validator($data);
+            if ($validator->fails()) {
+                return redirect('/register')
+                            ->withErrors($validator)
+                            ->withInput();
+            }else{
+                $this->create($data);
+                return redirect('added')->with('name',$data['username']);
+            }
+    
+            
         }
         return view('auth.register');
     }
