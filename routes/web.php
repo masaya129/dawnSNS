@@ -32,6 +32,7 @@ Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 
 //ログイン中のページ
 Route::get('/top','PostsController@index');
+Route::post('/top','PostsController@store');
 
 Route::get('/profile','UsersController@profile');
 
@@ -39,6 +40,5 @@ Route::get('/search','UsersController@index');
 
 Route::get('/follow-list','PostsController@index');
 Route::get('/follower-list','PostsController@index');
-
 
 
